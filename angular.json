@@ -3,5 +3,37 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-  }
+    "ngx-odata-client": {
+      "projectType": "library",
+      "root": "projects/ngx-odata-client",
+      "sourceRoot": "projects/ngx-odata-client/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ngx-odata-client/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ngx-odata-client/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ngx-odata-client/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/ngx-odata-client/src/test.ts",
+            "tsConfig": "projects/ngx-odata-client/tsconfig.spec.json",
+            "karmaConfig": "projects/ngx-odata-client/karma.conf.js"
+          }
+        }
+      }
+    }
+  },
+  "defaultProject": "ngx-odata-client"
 }
