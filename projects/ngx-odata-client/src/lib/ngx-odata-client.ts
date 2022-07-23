@@ -811,17 +811,17 @@ import { HttpParams } from "@angular/common/http";
        * @param closeParenthesis boolean to close or not the parenthesis.
        * @returns string of the filter.
        */
-      static getFilterData(element : FilterData, openParenthesis : boolean, closeParenthesis : boolean) : string
+      static getFilterData(element : FilterData, openParenthesis : boolean, closeParenthesis : boolean, variable : string = "") : string
       {         
           
           if (element.matchMode == MatchMode.startsWith || element.matchMode == MatchMode.endsWith || element.matchMode == MatchMode.contains)
           {                   
   
-              return this.getFunctionFilter(element,openParenthesis,closeParenthesis);
+              return this.getFunctionFilter(element,openParenthesis,closeParenthesis,variable);
           }
           else 
           {               
-              return this.getOperatorFilter(element,openParenthesis,closeParenthesis);
+              return this.getOperatorFilter(element,openParenthesis,closeParenthesis,variable);
           }
       } 
   
@@ -830,7 +830,7 @@ import { HttpParams } from "@angular/common/http";
       * @description
       * Gets raw filter string from a filter data that uses a function such as contains, startsWith, endsWith.
       * */
-      static getFunctionFilter(element : FilterData,openParenthesis : boolean,closeParenthesis : boolean){
+      static getFunctionFilter(element : FilterData,openParenthesis : boolean,closeParenthesis : boolean,variable : string = ""){
   
           let beginParenthesis = openParenthesis ? "(" : "";
           let endParenthesis = closeParenthesis ? ")" : "";
@@ -838,10 +838,10 @@ import { HttpParams } from "@angular/common/http";
           //let matchMode = (MatchMode as any)[element.matchMode]
           
           if (element.matchDirection == MatchDirection.inField){
-              return beginParenthesis + element.matchMode + "(" + element.field + ", " + this.getValue(element) + ")" + endParenthesis;
+              return beginParenthesis + element.matchMode + "(" + variable + element.field + ", " + this.getValue(element) + ")" + endParenthesis;
           }
           else {
-              return beginParenthesis + element.matchMode + "(" + this.getValue(element) + ", " + element.field + ")" + endParenthesis;
+              return beginParenthesis + element.matchMode + "(" + this.getValue(element) + ", " + variable + element.field + ")" + endParenthesis;
           }
       }
   
@@ -850,19 +850,18 @@ import { HttpParams } from "@angular/common/http";
       * @description
       * Gets raw filter string from a filter data that uses an operator such as eq, ne, gt, lt, ge, le.
       * */
-      static getOperatorFilter(element : FilterData,openParenthesis : boolean,closeParenthesis : boolean) : string{
+      static getOperatorFilter(element : FilterData,openParenthesis : boolean,closeParenthesis : boolean,variable : string = "") : string{
   
           let beginParenthesis = openParenthesis ? "(" : "";
           let endParenthesis = closeParenthesis ? ")" : "";
- 
-         
+          
           
  
           if (element.matchDirection == MatchDirection.inField){
-              return beginParenthesis + element.field + " " + element.matchMode + " " + this.getValue(element) + endParenthesis;
+              return beginParenthesis + variable + element.field + " " + element.matchMode + " " + this.getValue(element) + endParenthesis;
           }
           else {
-              return beginParenthesis + this.getValue(element) + " " +  element.matchMode + " " + element.field + endParenthesis;
+              return beginParenthesis + this.getValue(element) + " " +  element.matchMode + " " + variable + element.field + endParenthesis;
              
           }
       }
@@ -878,20 +877,21 @@ import { HttpParams } from "@angular/common/http";
        * @param depth depth of the filter.
        * @returns string of the filter.
        */
-      static getAnyFilterData(element : AnyFilterData,openParenthesis : boolean,closeParenthesis : boolean, depth : number) : string {
+      static getAnyFilterData(element : AnyFilterData,openParenthesis : boolean,closeParenthesis : boolean, depth : number, variable : string = "a") : string {
   
           let anyVariables = "abcdefghijklmnopqrstuvwxyz";
           let beginParenthesis = openParenthesis ? "(" : "";
           let endParenthesis = closeParenthesis ? ")" : "";
       
           if (element.FilterData instanceof FilterData){
-              return beginParenthesis + element.field + "/any(a : a/" + this.getFilterData(element.FilterData as FilterData,false,false) + ")" + endParenthesis
+           
+            return beginParenthesis + element.field + "/any(" + variable + " :" + this.getFilterData(element.FilterData as FilterData,false,false, variable + "/") + ")" + endParenthesis             
                          
           }
           else {
-              var variable = anyVariables[depth]
+               
   
-              return beginParenthesis + element.field + "/any(" + variable + " : " + anyVariables[depth] + "/" + this.getAnyFilterData(element.FilterData as AnyFilterData,false,false,depth + 1) + ")" + endParenthesis; 
+              return beginParenthesis + element.field + "/any(" + anyVariables[depth] + " : " + anyVariables[depth] + "/" + this.getAnyFilterData(element.FilterData as AnyFilterData,false,false,depth + 1,anyVariables[depth]) + ")" + endParenthesis; 
             
           }
   
