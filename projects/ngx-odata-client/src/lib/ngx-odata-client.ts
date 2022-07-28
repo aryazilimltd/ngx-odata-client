@@ -918,7 +918,9 @@ import { HttpParams } from "@angular/common/http";
           else if (typeof element.value == "number") {
               return element.value.toString();
           }
-  
+          else if (typeof element.value == "boolean") {
+            return element.value;
+          }  
           else if (Object.prototype.toString.call(element.value) === "[object Date]" && !isNaN(element.value))
           {
               return element.value.toISOString();            
