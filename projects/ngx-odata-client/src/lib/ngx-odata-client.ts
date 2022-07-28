@@ -508,9 +508,15 @@ import { HttpParams } from "@angular/common/http";
                  {
                      query += ";";
                  }
- 
+
+                 query += "$expand=";
+                 
+                 let comma = "";
                  for (let index = 0; index < this.select.expandData.length; index++) {
-                     query += "$expand=" + this.select.expandData[index].getDeepExpandString();                    
+                    if (index == 1){
+                        comma = ",";
+                    }
+                     query += comma + this.select.expandData[index].getDeepExpandString();                    
                  }
              }
              
