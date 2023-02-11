@@ -1,6 +1,6 @@
 {
   "name": "ngx-odata-client",
-  "version": "0.1.0-preview.1",
+  "version": "0.1.1-preview.3",
   "peerDependencies": {
     "@angular/common": "^13.3.0",
     "@angular/core": "^13.3.0"

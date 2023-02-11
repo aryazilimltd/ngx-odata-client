@@ -134,8 +134,15 @@ describe('Any filter',() => {
     query3.filter.Any("Posts").AddExpression("Id",MatchMode.equals,1).And().BeginParenthesis().AddExpression("Name",MatchMode.notEquals,"test").Or().AddExpression("Name",MatchMode.endsWith,"test3").EndParenthesis().And().Any("Authors").AddExpression("Name",MatchMode.endsWith,"mes").EndAny().EndAny();
 
     it('url with multiple filter in any filter should be created', () => {
-        expect(decodeURI(query3.getHttpParams().toString())).toBe("$filter=Posts/any(x:x/Id eq 1 and (x/Name ne 'test' or endsWith(x/Name,'test3')) and Authors/any(y:endsWith(y/Name,'mes')))&$top=10&$skip=0&$count=true");
+        expect(decodeURI(query3.getHttpParams().toString())).toBe("$filter=Posts/any(x:x/Id eq 1 and (x/Name ne 'test' or endsWith(x/Name,'test3')) and x/Authors/any(y:endsWith(y/Name,'mes')))&$top=10&$skip=0&$count=true");
     })
+
+    var query4 = new QueryData();
+    query4.filter.Any("Posts").Any("Post/Authors").AddExpression("Name",MatchMode.endsWith,"mes").EndAny().EndAny();
+
+    it('url with multiple filter in any filter should be created', () => {
+        expect(decodeURI(query4.getHttpParams().toString())).toBe("$filter=Posts/any(x:x/Post/Authors/any(y:endsWith(y/Name,'mes')))&$top=10&$skip=0&$count=true");
+    });
 })
 
 describe('All filter',() => {
@@ -177,7 +184,7 @@ describe('count filter', () => {
     query1.filter.Count("Posts").AddExpression("Id",MatchMode.equals,1).EndCount(MatchMode.equals,1);
 
     it('url with count filter should be created', () => {
-        expect(decodeURI(query1.getHttpParams().toString())).toBe("$filter=Posts/count($filter=Id eq 1) eq 1&$top=10&$skip=0&$count=true");
+        expect(decodeURI(query1.getHttpParams().toString())).toBe("$filter=Posts/$count($filter=Id eq 1) eq 1&$top=10&$skip=0&$count=true");
     })
 
     var query2 = new QueryData();
